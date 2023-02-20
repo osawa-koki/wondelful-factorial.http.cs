@@ -1,5 +1,6 @@
 using System.Text.Json;
 using dotenv.net;
+using Microsoft.AspNetCore.Http.Extensions;
 
 // .envファイルの読み込み
 DotEnv.Load(options: new DotEnvOptions(trimValues: true));
@@ -24,8 +25,12 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 
-app.MapGet("/{num:int}", (int num) =>
+app.MapGet("/{num:int}", (int num, HttpContext context) =>
 {
+  // リクエストURLを取得
+  var requestUrl = context.Request.GetDisplayUrl();
+  Console.WriteLine($"Request Url -> {requestUrl}");
+
   if (num < 1)
   {
     return Results.BadRequest(new
@@ -49,7 +54,7 @@ app.MapGet("/{num:int}", (int num) =>
   var jsonDoc = JsonDocument.Parse(content);
   var n = jsonDoc.RootElement.GetProperty("num").GetInt32();
 
-  return Results.BadRequest(new {
+  return Results.Ok(new {
     num = num * n,
   });
 
