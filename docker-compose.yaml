@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    container_name: wondelful-factorial-http-cs
+    ports:
+      - "8080:8080"
